@@ -1,10 +1,10 @@
 from github import Github
 from github import Auth
 from datetime import datetime
+from dotenv import load_dotenv
 import os
 import csv
 import time
-from dotenv import load_dotenv
 
 # Load environment variables from .env file
 load_dotenv()
@@ -39,10 +39,9 @@ frameworks_subset = [
     "vuejs/vue",
 ]
 
-
 # Prepare the CSV file
 csv_filename = "framework_stats.csv"
-csv_header = ["Framework", "Contributors", "Commits", "Issue Resolution Time"]
+csv_header = ["Framework", "Contributors", "Commits", "Issue Resolution Time (s)"]
 
 with open(csv_filename, mode="w", newline="") as file:
     writer = csv.writer(file)
