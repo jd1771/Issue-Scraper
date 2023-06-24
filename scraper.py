@@ -1,8 +1,26 @@
 from github import Github
 from datetime import datetime
+import os
+
+# Access the github token
+github_token = os.getenv("GITHUB_TOKEN")
 
 # Enter your GitHub personal access token here
-g = Github("your_access_token")
+g = Github(github_token)
+
+# List of the repo's of interest
+frameworks = [
+    "facebook/react",
+    "angular/angular",
+    "vuejs/vue",
+    "sveltejs/svelte",
+    "emberjs/ember.js",
+    "preactjs/preact",
+    "polymer/polymer",
+    "backbone/backbone",
+    "knockout/knockout",
+    "mithriljs/mithril"
+]
 
 # Specify the repository
 repo = g.get_repo("facebook/react")
@@ -18,3 +36,4 @@ for issue in closed_issues:
         avg_time_to_close += time_to_close.total_seconds()
         print(f"Issue {issue.number} was closed in {time_to_close.total_seconds()} seconds")
 print(f"Average time to close: {avg_time_to_close / count} seconds")
+
