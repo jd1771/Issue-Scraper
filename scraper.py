@@ -26,10 +26,8 @@ frameworks = [
     "sveltejs/svelte",
     "emberjs/ember.js",
     "preactjs/preact",
-    "polymer/polymer",
-    "jashkenas/backbone",
-    "knockout/knockout",
-    "MithrilJS/mithril.js"
+    "jquery/jquery",
+    "vercel/next.js",
 ]
 
 ## Subset of the repos of interest (for testing purposes)
