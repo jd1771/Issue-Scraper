@@ -39,14 +39,14 @@ frameworks_subset = [
 
 # Prepare the CSV file
 csv_filename = "framework_stats.csv"
-csv_header = ["Framework", "Contributors", "Commits", "Issue Resolution Time (s)"]
+csv_header = ["Framework", "Contributors", "Commits", "Avg Issue Resolution Time (s)"]
 
 with open(csv_filename, mode="w", newline="") as file:
     writer = csv.writer(file)
     writer.writerow(csv_header)
 
     # Loop through the frameworks list
-    for framework in frameworks_subset:
+    for framework in frameworks:
         owner, repo = framework.split("/")
         repo = g.get_repo(framework)
 

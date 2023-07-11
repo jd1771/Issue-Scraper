@@ -1,4 +1,9 @@
-Framework,Contributors,Commits,Issue Resolution Time (s)
-facebook/react,426,15854,181737.76
-angular/angular,384,27323,44810.98
-vuejs/vue,349,3547,364390.74
+Framework,Contributors,Commits,Avg Issue Resolution Time (s)
+facebook/react,426,15873,246762.68
+angular/angular,384,27401,108623.46
+vuejs/vue,348,3547,483433.4
+sveltejs/svelte,423,7433,63073.74
+emberjs/ember.js,343,22243,607860.94
+preactjs/preact,297,5358,199014.22
+jquery/jquery,291,6630,681866.14
+vercel/next.js,450,16585,61409.84
