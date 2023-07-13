@@ -38,13 +38,13 @@ frameworks_to_name = {
 }
 
 frameworks_subset = [
-    "jquery/jquery",
+    "facebook/react",
 ]
 
 # Prepare the CSV file
 csv_filename = "framework_stats.csv"
 csv_header = ["Framework", "Issue ID", "Issue Author", "Closed By", "Labels", "Start Date", "Close Date"]
-count = 0
+MAX_ISSUES = 1000
 
 with open(csv_filename, mode="w", newline="", encoding="utf-8") as file:
     writer = csv.writer(file)
@@ -52,6 +52,7 @@ with open(csv_filename, mode="w", newline="", encoding="utf-8") as file:
 
     # Loop through the frameworks list
     for framework in frameworks:
+        count = 0
         owner, repo = framework.split("/")
         repo = g.get_repo(framework)
 
@@ -74,11 +75,23 @@ with open(csv_filename, mode="w", newline="", encoding="utf-8") as file:
                 # Write the data to the CSV file
                 data_row = [frameworks_to_name[framework], issue_id, author, closed_by, labels, start_date, close_date]
                 writer.writerow(data_row)
-                print(f"Done issue {count} ")
+                
+                print(f"Done issue {count}")
+                
+                if count >= MAX_ISSUES:
+                    break
+
+                # Check rate limit
+                rate_limit = g.get_rate_limit()
+                remaining_requests = rate_limit.core.remaining
+                reset_time = rate_limit.core.reset.timestamp()
+
+                if remaining_requests <= 25:
+                    # Sleep until the rate limit resets
+                    sleep_time = reset_time - time.time() + 10  # Add 10 seconds buffer
+                    print(f"Reached rate limit. Waiting for {sleep_time} seconds...")
+                    time.sleep(sleep_time)
 
         print(f"Data for {framework} written to CSV file.")
-
-        # Delay for a few seconds to avoid hitting the rate limits
-        time.sleep(2)
 
 print(f"Data exported to {csv_filename} successfully.")
