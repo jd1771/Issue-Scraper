@@ -1,9 +1,10 @@
 from github import Github
 from datetime import datetime
+import time
 from dotenv import load_dotenv
+import calendar
 import os
 import csv
-import time
 
 # Load environment variables from .env file
 load_dotenv()
@@ -12,7 +13,7 @@ load_dotenv()
 github_token = os.getenv("GITHUB_TOKEN")
 
 # using an access token
-g = Github(github_token)
+g = Github(github_token, per_page=100)
 
 # List of the repos of interest
 frameworks = [
@@ -38,13 +39,16 @@ frameworks_to_name = {
 }
 
 frameworks_subset = [
-    "facebook/react",
+    "vuejs/vue",
+    "sveltejs/svelte",
 ]
 
 # Prepare the CSV file
-csv_filename = "framework_stats.csv"
+csv_filename = "test.csv"
 csv_header = ["Framework", "Issue ID", "Issue Author", "Closed By", "Labels", "Start Date", "Close Date"]
-MAX_ISSUES = 1000
+
+MAX_ISSUES = 1500
+
 
 with open(csv_filename, mode="w", newline="", encoding="utf-8") as file:
     writer = csv.writer(file)
@@ -84,12 +88,14 @@ with open(csv_filename, mode="w", newline="", encoding="utf-8") as file:
                 # Check rate limit
                 rate_limit = g.get_rate_limit()
                 remaining_requests = rate_limit.core.remaining
-                reset_time = rate_limit.core.reset.timestamp()
+                
 
                 if remaining_requests <= 25:
                     # Sleep until the rate limit resets
-                    sleep_time = reset_time - time.time() + 10  # Add 10 seconds buffer
-                    print(f"Reached rate limit. Waiting for {sleep_time} seconds...")
+                    core_rate_limit = rate_limit.core
+                    reset_timestamp = calendar.timegm(core_rate_limit.reset.timetuple())
+                    sleep_time = reset_timestamp - calendar.timegm(time.gmtime())+ 5  # add 5 seconds to be sure the rate limit has been reset
+                    print(f"Rate limit reached. Sleeping for {sleep_time} seconds.")
                     time.sleep(sleep_time)
 
         print(f"Data for {framework} written to CSV file.")
