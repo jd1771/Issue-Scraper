@@ -1,5 +1,4 @@
 from github import Github
-from datetime import datetime
 import time
 from dotenv import load_dotenv
 import calendar
@@ -45,7 +44,7 @@ frameworks_subset = [
 
 # Prepare the CSV file
 csv_filename = "test.csv"
-csv_header = ["Framework", "Issue ID", "Issue Author", "Closed By", "Labels", "Start Date", "Close Date"]
+csv_header = ["Framework", "Issue ID", "Issue Author", "Closed By", "Labels", "Start Date", "Close Date", "Total Comments", "Participants", "Assignees"]
 
 MAX_ISSUES = 1500
 
@@ -75,9 +74,18 @@ with open(csv_filename, mode="w", newline="", encoding="utf-8") as file:
                 closed_by = issue.closed_by.login
                 labels = [label.name for label in issue.labels]
                 issue_id = issue.number
+                
+                # Get the comments on the issue
+                comments = issue.get_comments()
+                comments_count = comments.totalCount
+                participants = set(comment.user.login for comment in comments)
+                participant_count = len(participants)
+                
+                # Get the assignees and description
+                assignees = [assignee.login for assignee in issue.assignees]
 
                 # Write the data to the CSV file
-                data_row = [frameworks_to_name[framework], issue_id, author, closed_by, labels, start_date, close_date]
+                data_row = [frameworks_to_name[framework], issue_id, author, closed_by, labels, start_date, close_date, comments_count, participant_count, assignees]
                 writer.writerow(data_row)
                 
                 print(f"Done issue {count}")
@@ -89,12 +97,11 @@ with open(csv_filename, mode="w", newline="", encoding="utf-8") as file:
                 rate_limit = g.get_rate_limit()
                 remaining_requests = rate_limit.core.remaining
                 
-
                 if remaining_requests <= 25:
                     # Sleep until the rate limit resets
                     core_rate_limit = rate_limit.core
                     reset_timestamp = calendar.timegm(core_rate_limit.reset.timetuple())
-                    sleep_time = reset_timestamp - calendar.timegm(time.gmtime())+ 5  # add 5 seconds to be sure the rate limit has been reset
+                    sleep_time = reset_timestamp - calendar.timegm(time.gmtime()) + 5  # add 5 seconds to be sure the rate limit has been reset
                     print(f"Rate limit reached. Sleeping for {sleep_time} seconds.")
                     time.sleep(sleep_time)
 
